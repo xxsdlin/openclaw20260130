@@ -9,6 +9,7 @@ import { normalizeAccountId } from "../routing/session-key.js";
 import { normalizeE164 } from "../utils.js";
 import { resolveWhatsAppAccount } from "../web/accounts.js";
 import { normalizeWhatsAppTarget } from "../whatsapp/normalize.js";
+import { resolveQQAccount } from "../qq/accounts.js";
 import { requireActivePluginRegistry } from "../plugins/runtime.js";
 import {
   resolveDiscordGroupRequireMention,
@@ -357,6 +358,33 @@ const DOCKS: Record<ChatChannelId, ChannelDock> = {
     groups: {
       resolveRequireMention: resolveIMessageGroupRequireMention,
       resolveToolPolicy: resolveIMessageGroupToolPolicy,
+    },
+    threading: {
+      buildToolContext: ({ context, hasRepliedRef }) => {
+        const isDirect = context.ChatType?.toLowerCase() === "direct";
+        const channelId =
+          (isDirect ? (context.From ?? context.To) : context.To)?.trim() || undefined;
+        return {
+          currentChannelId: channelId,
+          currentThreadTs: context.ReplyToId,
+          hasRepliedRef,
+        };
+      },
+    },
+  },
+  qq: {
+    id: "qq",
+    capabilities: {
+      chatTypes: ["direct", "group"],
+      media: true,
+    },
+    outbound: { textChunkLimit: 4000 },
+    config: {
+      resolveAllowFrom: ({ cfg, accountId }) =>
+        (resolveQQAccount({ cfg, accountId }).config.allowFrom ?? []).map((entry) =>
+          String(entry),
+        ),
+      formatAllowFrom: ({ allowFrom }) => formatLower(allowFrom),
     },
     threading: {
       buildToolContext: ({ context, hasRepliedRef }) => {

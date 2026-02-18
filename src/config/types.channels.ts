@@ -5,6 +5,7 @@ import type { MSTeamsConfig } from "./types.msteams.js";
 import type { SignalConfig } from "./types.signal.js";
 import type { SlackConfig } from "./types.slack.js";
 import type { TelegramConfig } from "./types.telegram.js";
+import type { QQConfig } from "./types.qq.js";
 import type { WhatsAppConfig } from "./types.whatsapp.js";
 import type { GroupPolicy } from "./types.base.js";
 
@@ -27,6 +28,7 @@ export type ChannelsConfig = {
   defaults?: ChannelDefaultsConfig;
   whatsapp?: WhatsAppConfig;
   telegram?: TelegramConfig;
+  qq?: QQConfig;
   discord?: DiscordConfig;
   googlechat?: GoogleChatConfig;
   slack?: SlackConfig;
